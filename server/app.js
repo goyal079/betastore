@@ -1,11 +1,13 @@
 import express from "express";
 const app = express();
 
-const port = 5000;
+const port = 1234;
 import "./connect.js";
 import userRouter from "./controllers/user/index.js";
 
 app.use(express.json());
+
+app.static("/","build");
 
 app.use("/api/user", userRouter);
 app.get("/", (req, res) => {

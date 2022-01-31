@@ -7,7 +7,7 @@ import userRouter from "./controllers/user/index.js";
 
 app.use(express.json());
 
-app.static("/","build");
+app.use(express.static("build"));
 
 app.use("/api/user", userRouter);
 app.get("/", (req, res) => {

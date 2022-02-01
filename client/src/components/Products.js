@@ -3,9 +3,12 @@ import Product from "./Product.js";
 import axios from "axios";
 const Products = () => {
   const [products, setProducts] = useState([]);
-  useEffect(async () => {
-    let res = await axios.get("/api/products");
-    setProducts(res.data.products[0].productList);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data } = await axios.get("/api/products");
+      setProducts(data);
+    };
+    fetchProducts();
   }, []);
   return (
     <div className="small-container">

@@ -1,19 +1,20 @@
 import React from "react";
 import "./App.css";
-import Header from "./components/Header.js";
-import Products from "./components/Products";
-import Banner from "./components/Banner";
-import Testimonials from "./components/Testimonials";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomeScreen from "./components/HomeScreen";
+import ProductDetails from "./components/ProductDetails";
+import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 function App() {
   return (
-    <div>
-      <Header />
-      <Products />
-      <Banner />
-      <Testimonials />
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomeScreen />}></Route>
+        <Route path="/product/:id" element={<ProductDetails />}></Route>
+      </Routes>
       <Footer />
-    </div>
+    </Router>
   );
 }
 

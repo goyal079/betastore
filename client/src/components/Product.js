@@ -12,7 +12,7 @@ function Product({ product }) {
         {product.rating} from {product.numReviews}
       </h3>
       <Rating rating={product.rating} />
-      <h1>$50.00</h1>
+      <h1>${product.price}</h1>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 const products = [
   {
-    _id: "1",
     name: "Brown Boots",
     image: "/images/footwear/boot.jpg",
     description:
@@ -10,10 +9,9 @@ const products = [
     price: 89.99,
     countInStock: 10,
     rating: 1.5,
-    numReviews: 12,
+    numReviews: 0,
   },
   {
-    _id: "2",
     name: "Blue Dress",
     image: "/images/dresses/bluedress.jpg",
     description:
@@ -23,10 +21,9 @@ const products = [
     price: 599.99,
     countInStock: 7,
     rating: 2.5,
-    numReviews: 8,
+    numReviews: 0,
   },
   {
-    _id: "3",
     name: "Smart Sandals",
     image: "/images/footwear/sandals.jpg",
     description:
@@ -36,10 +33,9 @@ const products = [
     price: 129.99,
     countInStock: 5,
     rating: 3.5,
-    numReviews: 12,
+    numReviews: 0,
   },
   {
-    _id: "4",
     name: "Orange Dress",
     image: "/images/dresses/orangedress.jpg",
     description:
@@ -49,10 +45,9 @@ const products = [
     price: 399.99,
     countInStock: 11,
     rating: 4,
-    numReviews: 12,
+    numReviews: 0,
   },
   {
-    _id: "5",
     name: "Green Dress",
     image: "/images/dresses/greendress.jpg",
     description:
@@ -62,10 +57,9 @@ const products = [
     price: 49.99,
     countInStock: 7,
     rating: 4,
-    numReviews: 10,
+    numReviews: 0,
   },
   {
-    _id: "6",
     name: "Beach Slipper",
     image: "/images/footwear/slipper.jpg",
     description:
@@ -75,7 +69,7 @@ const products = [
     price: 49.99,
     countInStock: 7,
     rating: 3.5,
-    numReviews: 10,
+    numReviews: 0,
   },
 ];
 export default products;

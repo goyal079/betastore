@@ -1,5 +1,4 @@
 {
-  "mongo": "mongodb+srv://goyal079:start123@cluster0.c8dzx.mongodb.net/devMern?retryWrites=true&w=majority",
   "jwtkey": "vinsmoke",
   "aeskey": "roronoa"
 }

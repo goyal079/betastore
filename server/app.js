@@ -7,7 +7,7 @@ import userRouter from "./controllers/user/index.js";
 import productRouter from "./controllers/products/index.js";
 app.use(express.json());
 
-// app.use(express.static("build"));
+app.use(express.static("build"));
 
 app.use("/api/user", userRouter);
 app.use("/api/products", productRouter);

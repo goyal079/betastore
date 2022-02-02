@@ -12,10 +12,7 @@ import {
 } from "../../middlewares/validations/index.js";
 // importing helpers
 import generateToken from "../../helpers/generateToken.js";
-// import verifyToken from "../../middlewares/auth/index.js";
-router.get("/", (req, res) => {
-  res.send("Getting user successfully");
-});
+import verifyToken from "../../middlewares/auth/index.js";
 
 /*
       API EndPoint : /api/users/register
@@ -66,23 +63,116 @@ router.post(
 */
 router.post("/login", loginRules(), errorMiddleware, async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ msg: "Invalid login credentials" });
+      return res.status(401).json({ msg: "Invalid Login credentials" });
     }
     let correctPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
     if (!correctPassword) {
-      return res.status(401).json({ msg: "Invalid login credentials" });
+      return res.status(401).json({ msg: "Invalid Login credentials" });
     }
-    let userToken = generateToken(req.body);
-    res.status(200).json({ userToken });
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
+/*
+      API EndPoint : /api/users/profile
+      Method : GET
+      Payload : Request.headers - xauthkey
+      Access Type : Private
+      Validations : 
+          a) Check if user exists from the data
+      Description :get User profile
+*/
+router.get("/profile", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      return res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+      });
+    }
+    return res.status(404).json({ msg: "User not found " });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal Server Error" });
+  }
+});
+
+/*
+      API EndPoint : /api/users/profile
+      Method : PUT
+      Payload : Extract _id from access token (x-auth-token from headers)
+      Access Type : Private/User
+      Description : User Update Profile  
+*/
+// response format same as register route (no validation rules needed)
+router.get("/", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user.isAdmin) {
+      return res
+        .status(403)
+        .json({ msg: "Permission Denied!! Missing Admin Access" });
+    }
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal Server Error" });
+  }
+});
+
+/*
+      API EndPoint : /api/users
+      Method : GET
+      Payload : Extract _id from access token (x-auth-token from headers)
+      Access Type : Private/Admin
+      Description : Get All the Users of LifeStyle Store 
+*/
+// response format array of users
+
+/*
+      API EndPoint : /api/users/:id
+      Method : DELETE
+      Payload : Extract _id from access token (x-auth-token from headers) and req.params.id
+      Access Type : Private/Admin
+      Description : Delete User 
+*/
+// response format : User Deleted Succesfully
+
+/*
+      API EndPoint : /api/users/:id
+      Method : GET
+      Payload : Extract _id from access token (x-auth-token from headers) and req.params.id
+      Access Type : Private/Admin
+      Description : Get User Details by ID from Admin
+*/
+// response format : user object
+
+/*
+      API EndPoint : /api/users/:id
+      Method : PUT
+      Payload : Extract _id from access token (x-auth-token from headers) and req.params.id
+      Access Type : Private/Admin
+      Description : Update User Details by ID from Admin
+*/
+// response format : user object
 export default router;

@@ -8,7 +8,7 @@ function verifyToken(req, res, next) {
     let token = req.headers["x-auth-key"];
     // decryptt
     if (!token) {
-      return res.status(401).json({ msg: "Token is required/Invalid token" });
+      return res.status(401).json({ msg: "Unauthorised Request" });
     }
     let bufferToken = AES.decrypt(token, process.env.AESKEY);
     let decryptedToken = enc.stringify(bufferToken);
@@ -17,7 +17,7 @@ function verifyToken(req, res, next) {
     next();
   } catch (error) {
     console.log(error);
-    return res.status(401).json({ msg: "error" });
+    return res.status(401).json({ msg: "Token is required/Invalid token" });
   }
 }
 

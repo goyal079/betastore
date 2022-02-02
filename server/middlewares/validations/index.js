@@ -40,8 +40,8 @@ function registrationRules() {
 }
 function loginRules() {
   return [
-    body("email", "Enter a valid email").notEmpty().isEmail(),
-    body("password", "Enter a password").notEmpty().isString(),
+    body("email", "Enter a valid email").notEmpty(),
+    body("password", "Enter a password").notEmpty(),
   ];
 }
 function errorMiddleware(req, res, next) {

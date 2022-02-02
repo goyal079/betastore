@@ -2,7 +2,7 @@ import { body, validationResult } from "express-validator";
 
 function registrationRules() {
   return [
-    body("fullname", "Enter full name").isString().notEmpty(),
+    body("name", "Enter full name").isString().notEmpty(),
     body("email", "Enter a valid email").notEmpty().isEmail(),
     body("password", "Password must contain atleast 6 characters").custom(
       (password, { req }) => {

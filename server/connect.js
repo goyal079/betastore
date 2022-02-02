@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import config from "config";
+
 import "dotenv/config";
 async function connectDB() {
   try {

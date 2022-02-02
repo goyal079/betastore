@@ -20,7 +20,7 @@ router.get("/", (req, res) => {
 /*
       API EndPoint : /api/users/register
       Method : POST
-      Payload : Request.Body - fullname,email,password
+      Payload : Request.Body - name,email,password
       Access Type : Public
       Validations : 
           a) Check Valid Email,name and password
@@ -32,16 +32,24 @@ router.post(
   errorMiddleware,
   async (req, res) => {
     try {
-      const duplicate = await User.findOne({ email: req.body.email });
+      const { name, email, password } = req.body;
+      const duplicate = await User.findOne({ email });
       if (duplicate) {
         return res.status(401).json({ msg: "User already exists" });
       }
       const newUser = new User(req.body);
       const salt = await bcrypt.genSalt(10);
-      newUser.password = await bcrypt.hash(req.body.password, salt);
+      newUser.password = await bcrypt.hash(password, salt);
       await newUser.save();
-      res.status(200).json({ msg: "User registered successfully" });
+      res.status(200).json({
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        isAdmin: newUser.isAdmin,
+        token: generateToken(newUser._id),
+      });
     } catch (error) {
+      console.error(error);
       res.status(500).json({ msg: "Internal server error" });
     }
   }
@@ -73,6 +81,7 @@ router.post("/login", loginRules(), errorMiddleware, async (req, res) => {
     let userToken = generateToken(req.body);
     res.status(200).json({ userToken });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ msg: "Internal server error" });
   }
 });

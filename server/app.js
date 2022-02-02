@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use(express.static("build"));
 
-app.use("/api/user", userRouter);
+app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
 app.get("/", (req, res) => {
   res.send("<h1>Hello Everyone from Node via Nginx</h1>");

@@ -179,11 +179,11 @@ router.delete("/:id", verifyToken, async (req, res) => {
         .status(403)
         .json({ msg: "Permission denied! Missing Admin Access" });
     }
-    const deleted = await User.findByIdAndDelete(req.params.id);
+    const deleted = await User.findOneAndDelete({ _id: req.params.id });
 
-    if (!deleted) {
-      return res.status(404).json({ msg: "User Not Found" });
-    }
+    // if (!deleted) {
+    //   return res.status(404).json({ msg: "User Not Found" }); // not working properly
+    // }
     res.status(200).json({ msg: "User deleted successfully" });
   } catch (error) {
     console.error(error);
@@ -232,4 +232,29 @@ router.get("/:id", verifyToken, async (req, res) => {
       Description : Update User Details by ID from Admin
 */
 // response format : user object
+
+router.put("/:id", verifyToken, async (req, res) => {
+  try {
+    const userAdmin = await User.findById(req.user._id);
+    if (!userAdmin.isAdmin) {
+      return res
+        .status(403)
+        .json({ msg: "Permission Denied. Missing Admin Access" });
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, req.body);
+    // if (!user) {
+    //   return res.status(404).json({ msg: "User Not Found" });
+    // }
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 export default router;

@@ -132,7 +132,7 @@ router.get("/", verifyToken, async (req, res) => {
         .status(403)
         .json({ msg: "Permission Denied!! Missing Admin Access" });
     }
-    const users = await User.find({});
+    const users = await User.find({}, "-password");
     res.status(200).json(users);
   } catch (error) {
     console.error(error);

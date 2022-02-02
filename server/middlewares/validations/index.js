@@ -44,6 +44,16 @@ function loginRules() {
     body("password", "Enter a password").notEmpty(),
   ];
 }
+function productRules() {
+  return [
+    body("name", "Enter a product name").notEmpty().isString(),
+    body("brand", "Enter a product brand").notEmpty().isString(),
+    body("price", "Enter a product price").notEmpty().isNumeric(),
+    body("description", "Enter a product description").notEmpty().isString(),
+    body("category", "Enter Product Category").isString(),
+    body("image", "Enter product image path").isString(),
+  ];
+}
 function errorMiddleware(req, res, next) {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -52,4 +62,4 @@ function errorMiddleware(req, res, next) {
   return res.status(400).json({ erros: errors.array() });
 }
 
-export { errorMiddleware, registrationRules, loginRules };
+export { errorMiddleware, registrationRules, loginRules, productRules };

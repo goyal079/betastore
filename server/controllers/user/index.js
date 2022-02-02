@@ -117,13 +117,13 @@ router.get("/profile", verifyToken, async (req, res) => {
 });
 
 /*
-      API EndPoint : /api/users/profile
-      Method : PUT
+      API EndPoint : /api/users
+      Method : GET
       Payload : Extract _id from access token (x-auth-token from headers)
-      Access Type : Private/User
-      Description : User Update Profile  
+      Access Type : Private/Admin
+      Description : Get All the Users of LifeStyle Store 
 */
-// response format same as register route (no validation rules needed)
+// response format array of users
 router.get("/", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -141,13 +141,26 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 /*
-      API EndPoint : /api/users
-      Method : GET
+      API EndPoint : /api/users/profile
+      Method : PUT
       Payload : Extract _id from access token (x-auth-token from headers)
-      Access Type : Private/Admin
-      Description : Get All the Users of LifeStyle Store 
+      Access Type : Private/User
+      Description : User Update Profile  
 */
-// response format array of users
+// response format same as register route (no validation rules needed)
+
+router.put("/profile", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, req.body);
+    if (!user) {
+      return res.status(401).json({ msg: "Can't find user" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
 
 /*
       API EndPoint : /api/users/:id
@@ -158,6 +171,26 @@ router.get("/", verifyToken, async (req, res) => {
 */
 // response format : User Deleted Succesfully
 
+router.delete("/:id", verifyToken, async (req, res) => {
+  try {
+    const admin = await User.findById(req.user._id);
+    if (!admin.isAdmin) {
+      return res
+        .status(403)
+        .json({ msg: "Permission denied! Missing Admin Access" });
+    }
+    const deleted = await User.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ msg: "User Not Found" });
+    }
+    res.status(200).json({ msg: "User deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 /*
       API EndPoint : /api/users/:id
       Method : GET
@@ -166,6 +199,30 @@ router.get("/", verifyToken, async (req, res) => {
       Description : Get User Details by ID from Admin
 */
 // response format : user object
+
+router.get("/:id", verifyToken, async (req, res) => {
+  try {
+    const userAdmin = await User.findById(req.user._id);
+    if (!userAdmin.isAdmin) {
+      return res
+        .status(403)
+        .json({ msg: "Permission Denied. Missing Admin Access" });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User Not Found" });
+    }
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
 
 /*
       API EndPoint : /api/users/:id

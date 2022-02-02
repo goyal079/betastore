@@ -54,6 +54,13 @@ function productRules() {
     body("image", "Enter product image path").isString(),
   ];
 }
+function reviewRules() {
+  return [
+    body("name", "Enter --- name").isString().notEmpty(),
+    body("rating", "Enter product rating").isNumeric().notEmpty(),
+    body("comment", "Enter your comments").isString().notEmpty(),
+  ];
+}
 function errorMiddleware(req, res, next) {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -62,4 +69,10 @@ function errorMiddleware(req, res, next) {
   return res.status(400).json({ erros: errors.array() });
 }
 
-export { errorMiddleware, registrationRules, loginRules, productRules };
+export {
+  errorMiddleware,
+  registrationRules,
+  loginRules,
+  productRules,
+  reviewRules,
+};

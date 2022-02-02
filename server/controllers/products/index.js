@@ -6,6 +6,7 @@ const router = express.Router();
 import {
   productRules,
   errorMiddleware,
+  reviewRules,
 } from "../../middlewares/validations/index.js";
 import verifyToken from "../../middlewares/auth/index.js";
 /*
@@ -27,6 +28,24 @@ router.get("/", async (req, res) => {
 });
 
 /*
+    API EndPoint : /api/products/top
+    Method : GET
+    Access Type : PUBLIC
+    Description : Sort top 3 products according to the rating
+*/
+router.get("/top", async (req, res) => {
+  try {
+    const products = await Product.find({});
+
+    products.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+    res.status(200).json(products.slice(0, 3));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Interval server error" });
+  }
+});
+
+/*
     API EndPoint : /api/user/:id
     Method : GET
     Payload : Request.Params.id
@@ -34,7 +53,6 @@ router.get("/", async (req, res) => {
     
     Description : List the produt matching the id
 */
-
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -68,7 +86,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
     const deleted = await Product.findOneAndDelete({ _id: req.params.id });
 
     // if (!deleted) {
-    //   return res.status(404).json({ msg: "User Not Found" }); // not working properly
+    //   return res.status(404).json({ msg: "Product Not Found" }); // not working properly
     // }
     res.status(200).json({ msg: "Product deleted successfully" });
   } catch (error) {
@@ -124,6 +142,24 @@ router.post(
 */
 //response format is updated product object
 
+router.put("/:id", verifyToken, async (req, res) => {
+  try {
+    const userAdmin = await User.findById(req.user._id);
+    if (!userAdmin.isAdmin) {
+      return res
+        .status(403)
+        .json({ msg: "Permission Denied. Missing Admin Access" });
+    }
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body);
+    if (!product) {
+      return res.status(401).json({ msg: "Can't find product" });
+    }
+    res.status(200).json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
 /*
     API EndPoint : /api/products/:id/reviews
     Method : POST
@@ -135,12 +171,32 @@ router.post(
 //Logical Validation
 // 1) Do not let a user to review same product twice
 //2) Update the rating and no of reviews fields
-
-/*
-    API EndPoint : /api/products/top
-    Method : GET
-    Access Type : PUBLIC
-    Description : Sort top 3 products according to the rating
-*/
+router.post(
+  "/reviews/:id",
+  verifyToken,
+  reviewRules(),
+  errorMiddleware,
+  async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      const exists = product.reviews.some((rev) => rev.user == req.user._id);
+      if (exists) {
+        return res.status(409).json({ msg: "Can't review twice" });
+      }
+      req.body.user = req.user._id;
+      product.reviews.push(req.body);
+      product.numReviews = product.reviews.length;
+      product.rating = (
+        (product.rating + Number(req.body.rating)) /
+        product.numReviews
+      ).toFixed(1);
+      await product.save();
+      res.status(200).json(product);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: "Internal server error" });
+    }
+  }
+);
 
 export default router;

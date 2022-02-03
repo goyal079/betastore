@@ -5,6 +5,7 @@ import HomeScreen from "./components/HomeScreen";
 import ProductDetails from "./components/ProductDetails";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Cart from "./components/Cart";
 function App() {
   return (
     <Router>
@@ -12,6 +13,9 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeScreen />}></Route>
         <Route path="/product/:id" element={<ProductDetails />}></Route>
+        <Route path="/cart" element={<Cart />}>
+          <Route path=":id" element={<Cart />}></Route>
+        </Route>
       </Routes>
       <Footer />
     </Router>

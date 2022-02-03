@@ -144,16 +144,24 @@ router.post(
 
 router.put("/:id", verifyToken, async (req, res) => {
   try {
+    const { id } = req.params;
     const userAdmin = await User.findById(req.user._id);
     if (!userAdmin.isAdmin) {
       return res
         .status(403)
         .json({ msg: "Permission Denied. Missing Admin Access" });
     }
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body);
+    console.log(req.params.id);
+    const product = await Product.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: req.body },
+      { new: true }
+    );
+    console.log(product);
     if (!product) {
-      return res.status(401).json({ msg: "Can't find product" });
+      return res.status(404).json({ msg: "Can't find product" });
     }
+
     res.status(200).json(product);
   } catch (error) {
     console.error(error);

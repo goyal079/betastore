@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { addToCart } from "../actions/cartActions.js";
+import { addToCart, removeFromCart } from "../actions/cartActions.js";
 
 function Cart() {
   const dispatch = useDispatch();
@@ -24,51 +24,59 @@ function Cart() {
       ) : (
         <div className="small-container cart-page">
           <table>
-            <tr>
-              <th>Product</th>
-              <th>Quantity</th>
-              <th>Subtotal</th>
-            </tr>
-            {cartItems.map((item) => (
-              <tr key={item.product}>
-                <td>
-                  <div className="cart-info">
-                    <Link to={`/product/${item.product}`}>
-                      <img src={item.image} alt={item.name} />
-                    </Link>
-                    <div>
-                      <p>{item.name}</p>
-                      <small>Price: ${item.price}</small>
-                      <br />
+            <tbody>
+              {" "}
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+              </tr>
+              {cartItems.map((item) => (
+                <tr key={item.product}>
+                  <td>
+                    <div className="cart-info">
+                      <Link to={`/product/${item.product}`}>
+                        <img src={item.image} alt={item.name} />
+                      </Link>
+                      <div>
+                        <p>{item.name}</p>
+                        <small>Price: ${item.price}</small>
+                        <br />
 
-                      <div className="btn2" onClick={() => {}}>
-                        Remove
+                        <div
+                          className="btn2"
+                          onClick={() => {
+                            dispatch(removeFromCart(item.product));
+                          }}
+                        >
+                          <i className="fas fa-trash"></i>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  {item.countInStock > 0 ? (
-                    <select
-                      type="number"
-                      value={item.qty}
-                      onChange={(e) =>
-                        dispatch(addToCart(item.product, +e.target.value))
-                      }
-                    >
-                      {[...Array(item.countInStock).keys()].map((x) => (
-                        <option key={x + 1} value={x + 1}>
-                          {x + 1}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    ""
-                  )}
-                </td>
-                <td>${item.price}</td>
-              </tr>
-            ))}
+                  </td>
+                  <td>
+                    {item.countInStock > 0 ? (
+                      <select
+                        type="number"
+                        value={item.qty}
+                        onChange={(e) =>
+                          dispatch(addToCart(item.product, +e.target.value))
+                        }
+                      >
+                        {[...Array(item.countInStock).keys()].map((x) => (
+                          <option key={x + 1} value={x + 1}>
+                            {x + 1}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <></>
+                    )}
+                  </td>
+                  <td>${item.price}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
           <div className="total-price">
             <table>

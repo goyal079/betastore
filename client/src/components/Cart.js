@@ -1,19 +1,30 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { addToCart, removeFromCart } from "../actions/cartActions.js";
 
 function Cart() {
   const dispatch = useDispatch();
+  const history = useNavigate();
   const productId = useParams().id;
   const [searchParams] = useSearchParams();
   const qty = searchParams.get("qty") ? searchParams.get("qty") : 1;
 
   const cart = useSelector((state) => state.cart);
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo, loading, error } = userLogin;
   const { cartItems } = cart;
 
   useEffect(() => {
-    if (productId) {
+    if (!userInfo) {
+      history("/login");
+    }
+    if (userInfo) {
       dispatch(addToCart(productId, +qty));
     }
   }, []);

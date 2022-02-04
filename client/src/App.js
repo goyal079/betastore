@@ -5,17 +5,22 @@ import HomeScreen from "./components/HomeScreen";
 import ProductDetails from "./components/ProductDetails";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Account from "./components/Account";
 import Cart from "./components/Cart";
+import Admin from "./components/Admin";
 function App() {
   return (
     <Router>
-      <Navbar  />
+      <Navbar />
       <Routes>
         <Route path="/" element={<HomeScreen />}></Route>
         <Route path="/product/:id" element={<ProductDetails />}></Route>
         <Route path="/cart" element={<Cart />}>
           <Route path=":id" element={<Cart />}></Route>
         </Route>
+        <Route path="/login" element={<Account />}></Route>
+        <Route path="/register" element={<Account />}></Route>
+        <Route path="/admin" element={<Admin />}></Route>
       </Routes>
       <Footer />
     </Router>

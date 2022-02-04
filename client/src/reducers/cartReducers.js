@@ -13,7 +13,7 @@ export const cartReducer = (state = { cartItems: [] }, action) => {
           ),
         };
       } else {
-        return { ...state, cartItems: [...state.cartItems, action.payload] };
+        return { ...state, cartItems: [...state.cartItems, item] };
       }
     case CART_REMOVE_ITEM:
       return { ...state, cartItems: action.payload };

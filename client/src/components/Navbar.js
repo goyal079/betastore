@@ -1,8 +1,15 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutAction } from "../actions/userActions";
 function NavBar() {
+  const dispatch = useDispatch();
   const [toggle, setToggle] = useState(false);
-
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+  const logoutHandler = () => {
+    dispatch(logoutAction());
+  };
   const menuToggle = () => {
     setToggle(!toggle);
   };
@@ -25,11 +32,19 @@ function NavBar() {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/">Cart</Link>
+                <Link to="/cart">Cart</Link>
               </li>
-              <li>
-                <Link to="/">Sign In</Link>
-              </li>
+              {userInfo ? (
+                <li>
+                  <Link to="/login" onClick={logoutHandler}>
+                    Logout
+                  </Link>
+                </li>
+              ) : (
+                <li>
+                  <Link to="/login">Sign In</Link>
+                </li>
+              )}
             </ul>
           </nav>
           <Link to="/">
